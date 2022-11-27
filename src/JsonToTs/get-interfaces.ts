@@ -23,7 +23,7 @@ function parseKeyMetaData(key: string): KeyMetaData {
 }
 
 function findNameById(id: string, names: NameEntry[]): string {
-  return names.find(_ => _.id === id).name ;
+  return names.find(_ => _.id === id).name || '';
 }
 
 function removeNullFromUnion(unionTypeName: string) {
@@ -86,7 +86,19 @@ export function getInterfaceStringFromDescription({ name, typeMap }: InterfaceDe
     .map(([key, name]) => `  ${key}: ${name};\n`)
     .reduce((a, b) => (a += b), "");
 
-  let interfaceString = `interface I${name} {\n`;
+  let interfaceString = `interface ${name} {\n`;
+  interfaceString += stringTypeMap;
+  interfaceString += "}";
+
+  return interfaceString;
+}
+
+export function getClassStringFromDescriptionByInterface({ name, typeMap }: InterfaceDescription): string {
+  const stringTypeMap = Object.entries(typeMap)
+    .map(([key, name]) => ` @JsonProperty()\n ${key}: ${name};\n`)
+    .reduce((a, b) => (a += b), "");
+
+  let interfaceString = `class ${name.replace('I', '')} extends ${name}  {\n`;
   interfaceString += stringTypeMap;
   interfaceString += "}";
 

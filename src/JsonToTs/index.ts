@@ -4,7 +4,8 @@ import { Options } from "./model";
 import { shim } from "es7-shim/es7-shim";
 import {
   getInterfaceDescriptions,
-  getInterfaceStringFromDescription
+  getInterfaceStringFromDescription,
+  getClassStringFromDescriptionByInterface
 } from "./get-interfaces";
 import { getNames } from "./get-names";
 import { isArray, isObject } from "./util";
@@ -40,9 +41,9 @@ export default function JsonToTS(json: any, userOptions?: Options): string[] {
   optimizeTypeStructure(typeStructure);
 
   const names = getNames(typeStructure, options.rootName);
-
-  return getInterfaceDescriptions(typeStructure, names).map(
-    getInterfaceStringFromDescription
-  );
+  console.log({ names });
+  const types = getInterfaceDescriptions(typeStructure, names);
+  console.log({ types });
+  return types.map(getClassStringFromDescriptionByInterface);
 }
 

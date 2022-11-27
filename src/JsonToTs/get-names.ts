@@ -3,6 +3,10 @@ import * as pluralize from "pluralize";
 import { TypeStructure, NameEntry, NameStructure, TypeGroup, TypeDescription } from "./model";
 import { getTypeDescriptionGroup, parseKeyMetaData, findTypeById, isHash } from "./util";
 
+
+function getCustomName() {
+
+}
 function getName(
   { rootTypeId, types }: TypeStructure,
   keyName: string,
@@ -10,14 +14,13 @@ function getName(
   isInsideArray: boolean
 ): NameStructure | undefined {
   const typeDesc = types.find(_ => _.id === rootTypeId);
-
   switch (getTypeDescriptionGroup(typeDesc)) {
     case TypeGroup.Array:
       typeDesc.arrayOfTypes.forEach((typeIdOrPrimitive, i) => {
         getName(
           { rootTypeId: typeIdOrPrimitive, types },
           // to differenttiate array types
-          i === 0 ? keyName : `${keyName}${i + 1}`,
+          i === 0 ? `I${keyName.replace(/^\S/, s => s.toUpperCase())}` : `I${keyName.replace(/^\S/, s => s.toUpperCase())}${i + 1}`,
           names,
           true
         );
@@ -76,7 +79,7 @@ function getNameById(
        * picking name for type in array requires to singularize that type name,
        * and if not then no need to singularize
        */
-      name = [keyName]
+      name = [`I${keyName.replace(/^\S/, s => s.toUpperCase())}`]
         .map(key => parseKeyMetaData(key).keyValue)
         .map(name => (isInsideArray ? pluralize.singular(name) : name))
         .map(pascalCase)
@@ -141,7 +144,7 @@ function getArrayName(typeDesc: TypeDescription, types: TypeDescription[], nameM
 function convertToReadableType(idOrPrimitive: string, types: TypeDescription[], nameMap: NameEntry[]): string {
   return isHash(idOrPrimitive)
     ? // array keyName makes no difference in picking name for type
-      getNameById(idOrPrimitive, null, true, types, nameMap)
+    getNameById(idOrPrimitive, null, true, types, nameMap)
     : idOrPrimitive;
 }
 

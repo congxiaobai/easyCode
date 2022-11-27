@@ -52,6 +52,6 @@ export function getTypeDescriptionGroup(desc: TypeDescription): TypeGroup {
   }
 }
 
-export function findTypeById(id: string, types: TypeDescription[]): TypeDescription {
+export function findTypeById(id: string, types: TypeDescription[]): TypeDescription | undefined {
   return types.find(_ => _.id === id);
 }
