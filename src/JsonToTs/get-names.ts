@@ -20,7 +20,7 @@ function getName(
         getName(
           { rootTypeId: typeIdOrPrimitive, types },
           // to differenttiate array types
-          i === 0 ? `I${keyName.replace(/^\S/, s => s.toUpperCase())}` : `I${keyName.replace(/^\S/, s => s.toUpperCase())}${i + 1}`,
+          i === 0 ? `${keyName}` : `${keyName}${i + 1}`,
           names,
           true
         );
@@ -79,12 +79,14 @@ function getNameById(
        * picking name for type in array requires to singularize that type name,
        * and if not then no need to singularize
        */
-      name = [`I${keyName.replace(/^\S/, s => s.toUpperCase())}`]
+
+      name = [keyName]
         .map(key => parseKeyMetaData(key).keyValue)
         .map(name => (isInsideArray ? pluralize.singular(name) : name))
         .map(pascalCase)
         .map(normalizeInvalidTypeName)
         .map(pascalCase) // needed because removed symbols might leave first character uncapitalized
+
         .map(name =>
           uniqueByIncrement(
             name,
@@ -95,7 +97,13 @@ function getNameById(
       break;
   }
 
-  nameMap.push({ id, name });
+  nameMap.push({
+    id,
+    name,
+    IName: `I${name}`,
+    ModelName: `Modal${name}`,
+    VMName: `ViewModal${name}`
+  });
   return name;
 }
 

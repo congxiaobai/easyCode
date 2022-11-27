@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export enum TypeGroup {
   Primitive,
   Array,
@@ -20,6 +21,9 @@ export interface TypeStructure {
 export interface NameEntry {
   id: string;
   name: string;
+  IName:string;
+  ModelName:string;
+  VMName:string;
 }
 
 export interface NameStructure {

@@ -39,7 +39,7 @@ export default function JsonToTS(json: any, userOptions?: Options): string[] {
    * so we delete the unused ones here
    */
   optimizeTypeStructure(typeStructure);
-
+  console.log(typeStructure)
   const names = getNames(typeStructure, options.rootName);
   console.log({ names });
   const types = getInterfaceDescriptions(typeStructure, names);
