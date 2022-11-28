@@ -33,11 +33,16 @@ export interface NameStructure {
 
 export interface InterfaceDescription {
   name: string;
+  IName:string;
+  ModelName:string;
+  VMName:string;
   typeMap: object;
 }
 
+export type ModalType = 'interface' | 'modal' | 'viewModal'
 export interface Options {
   rootName: string;
+  modalType: ModalType;
 }
 
 export interface KeyMetaData {

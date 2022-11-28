@@ -1,4 +1,4 @@
-import { InterfaceDescription, NameEntry, TypeStructure, KeyMetaData } from "./model";
+import { InterfaceDescription, NameEntry, TypeStructure, KeyMetaData, ModalType } from "./model";
 import { isHash, findTypeById, isNonArrayUnion } from "./util";
 
 function isKeyNameValid(keyName: string) {
@@ -22,7 +22,16 @@ function parseKeyMetaData(key: string): KeyMetaData {
   }
 }
 
-function findNameById(id: string, names: NameEntry[]): string {
+function findNameById(id: string, names: NameEntry[], modalType: ModalType): string {
+  if (modalType === 'interface') {
+    return names.find(_ => _.id === id).IName || '';
+  }
+  if (modalType === 'modal') {
+    return names.find(_ => _.id === id).ModelName || '';
+  }
+  if (modalType === 'viewModal') {
+    return names.find(_ => _.id === id).VMName || '';
+  }
   return names.find(_ => _.id === id).name || '';
 }
 
@@ -33,7 +42,7 @@ function removeNullFromUnion(unionTypeName: string) {
   return typeNames.join(" | ");
 }
 
-function replaceTypeObjIdsWithNames(typeObj: { [index: string]: string }, names: NameEntry[]): object {
+function replaceTypeObjIdsWithNames(typeObj: { [index: string]: string }, names: NameEntry[], modalType: ModalType): object {
   return (
     Object.entries(typeObj)
       // quote key if is invalid and question mark if optional from array merging
@@ -51,7 +60,7 @@ function replaceTypeObjIdsWithNames(typeObj: { [index: string]: string }, names:
           return [key, type, isOptional];
         }
 
-        const newType = findNameById(type, names);
+        const newType = findNameById(type, names, modalType);
         return [key, newType, isOptional];
       })
       // if union has null, remove null and make type optional
@@ -81,24 +90,24 @@ function replaceTypeObjIdsWithNames(typeObj: { [index: string]: string }, names:
   );
 }
 
-export function getInterfaceStringFromDescription({ name, typeMap }: InterfaceDescription): string {
+export function getInterfaceStringFromDescription({ name, typeMap, IName }: InterfaceDescription): string {
   const stringTypeMap = Object.entries(typeMap)
     .map(([key, name]) => `  ${key}: ${name};\n`)
     .reduce((a, b) => (a += b), "");
 
-  let interfaceString = `interface ${name} {\n`;
+  let interfaceString = `export interface ${IName} {\n`;
   interfaceString += stringTypeMap;
   interfaceString += "}";
 
   return interfaceString;
 }
 
-export function getClassStringFromDescriptionByInterface({ name, typeMap }: InterfaceDescription): string {
+export function getClassStringFromDescriptionByInterface({ name, typeMap, IName, ModelName }: InterfaceDescription): string {
   const stringTypeMap = Object.entries(typeMap)
     .map(([key, name]) => ` @JsonProperty()\n ${key}: ${name};\n`)
     .reduce((a, b) => (a += b), "");
 
-  let interfaceString = `class ${name.replace('I', '')} extends ${name}  {\n`;
+  let interfaceString = `export class ${ModelName} extends ${IName}  {\n`;
   interfaceString += stringTypeMap;
   interfaceString += "}";
 
@@ -106,14 +115,14 @@ export function getClassStringFromDescriptionByInterface({ name, typeMap }: Inte
 }
 
 
-export function getInterfaceDescriptions(typeStructure: TypeStructure, names: NameEntry[]): InterfaceDescription[] {
+export function getInterfaceDescriptions(typeStructure: TypeStructure, names: NameEntry[], modalType: ModalType): InterfaceDescription[] {
   return names
-    .map(({ id, name }) => {
+    .map(({ id, name, ModelName, VMName, IName }) => {
       const typeDescription = findTypeById(id, typeStructure.types);
 
       if (typeDescription.typeObj) {
-        const typeMap = replaceTypeObjIdsWithNames(typeDescription.typeObj, names);
-        return { name, typeMap };
+        const typeMap = replaceTypeObjIdsWithNames(typeDescription.typeObj, names, modalType);
+        return { name, typeMap, ModelName, VMName, IName };
       } else {
         return null;
       }

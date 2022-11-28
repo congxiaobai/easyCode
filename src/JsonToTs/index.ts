@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { getTypeStructure, optimizeTypeStructure } from "./get-type-structure";
-import { Options } from "./model";
+import { ModalType, NameEntry, Options } from "./model";
 import { shim } from "es7-shim/es7-shim";
 import {
   getInterfaceDescriptions,
@@ -11,9 +11,10 @@ import { getNames } from "./get-names";
 import { isArray, isObject } from "./util";
 shim();
 
-export default function JsonToTS(json: any, userOptions?: Options): string[] {
+export default function JsonToTS(json: any, userOptions?: Options): any {
   const defaultOptions: Options = {
-    rootName: "RootObject"
+    rootName: "RootObject",
+    modalType: 'interface',
   };
   const options = {
     ...defaultOptions,
@@ -39,11 +40,23 @@ export default function JsonToTS(json: any, userOptions?: Options): string[] {
    * so we delete the unused ones here
    */
   optimizeTypeStructure(typeStructure);
-  console.log(typeStructure)
+  console.log({ typeStructure });
   const names = getNames(typeStructure, options.rootName);
   console.log({ names });
-  const types = getInterfaceDescriptions(typeStructure, names);
+  return { names, typeStructure };
+
+}
+
+export function paseInterface(names: NameEntry[], typeStructure: any, modalType: ModalType): string[] {
+  const types = getInterfaceDescriptions(typeStructure, names, modalType);
   console.log({ types });
+  if (modalType === 'interface') {
+    return types.map(getInterfaceStringFromDescription);
+  }
   return types.map(getClassStringFromDescriptionByInterface);
+}
+export function getAllInterface(names: NameEntry[], typeStructure: any):string[]{
+  const types = getInterfaceDescriptions(typeStructure, names, 'interface');
+  return types.map(item=>item.IName);
 }
 
