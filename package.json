@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:easyCode.json-to-ts-interface"
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -18,6 +18,10 @@
       {
         "command": "easyCode.json-to-ts-interface",
         "title": "生成Interface"
+      },
+      {
+        "command": "easyCode.interface-to-component",
+        "title": "根据接口生成组件"
       }
     ],
     "menus": {
@@ -27,7 +31,12 @@
           "group": "react-generator",
           "when": "resourceExtname == .json"
         }
-      ]
+      ],
+      "editor/context": [{
+        "command": "easyCode.interface-to-component",
+        "group": "react-generator",
+        "when": "resourceLangId == typescript && editorHasSelection"
+      }]
     }
   },
   "scripts": {
