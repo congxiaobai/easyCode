@@ -1,7 +1,3 @@
-//@ts-check
-
-'use strict';
-
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const destPath = path.resolve(__dirname, 'build');
@@ -16,7 +12,7 @@ const extensionConfig = {
   entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
     // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
-    path: path.resolve(__dirname, 'dist'),
+    path: destPath,
     filename: 'extension.js',
     libraryTarget: 'commonjs2'
   },
@@ -49,7 +45,7 @@ const extensionConfig = {
     new CopyPlugin({
       patterns: [
         {
-          from: 'src/templates/*.ejs',
+          from: 'src/template/*.ejs',
           globOptions: {
             gitignore: true,
           },

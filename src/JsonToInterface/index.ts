@@ -10,7 +10,7 @@ export default function jsonToTsInterface(uri: Uri) {
   const { names, typeStructure } = JsonToTS(JSON.parse(json));
   const interfaces = paseInterface(names, typeStructure, 'interface');
   const filePath = `${fsPath}.ts`;
-  const allInterface = getAllInterface(names, typeStructure,)
+  const allInterface = getAllInterface(names, typeStructure);
   fs.writeFileSync(filePath, interfaces.join('\n\n'));
   const modalPath = `${fsPath.replace('.json', '')}Modal.ts`;
 

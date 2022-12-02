@@ -11,14 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand('easyCode.json-to-ts-interface', jsonToTsInterface
 	);
 
-	let disposable2 = vscode.commands.registerCommand('easyCode.interface-to-component', ()=>{
-		let editor = vscode.window.activeTextEditor;
-		let document = editor.document;
-		let selection = editor.selection;	
-		let text = document.getText(selection);
-		document.
-		debugger
-	}
+	let disposable2 = vscode.commands.registerCommand('easyCode.interface-to-component', autoFillContent
 	);
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(disposable2);
