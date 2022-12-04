@@ -3,11 +3,28 @@ import * as path from 'path';
 import * as util from 'util';
 import * as fs from 'fs';
 import * as ejs from 'ejs';
-import { Uri } from 'vscode';
-import * as camelCase from 'lodash.camelcase';
+import { commands, Uri } from 'vscode';
+import { capitalize } from '../JsonToTs/get-names';
 const renderFileAsync = util.promisify(ejs.renderFile);
 const writeFileAsync = util.promisify(fs.writeFile);
-export default async function autoFillContent(uri: Uri) {
+import { generateTableColumConfig, generateDescriptionFiled, generateEditFormFiled, generateCrudFormFiled, generateSearchFormFiled, deleteExt, generateFakerData } from './utils';
+const cmdMap = {
+    'crud': 'Crud.ejs',
+    'searchForm': 'SearchForm.ejs',
+    'table': 'Table.ejs',
+    'editForm': 'EditForm.ejs',
+    'description': 'Description.ejs',
+};
+const generateMap = {
+    'crud': generateCrudFormFiled,
+    'searchForm': generateSearchFormFiled,
+    'table': generateTableColumConfig,
+    'editForm': generateEditFormFiled,
+    'description': generateDescriptionFiled,
+};
+
+
+export default async function autoFillContent(uri: Uri, commandKey: string) {
     const { fsPath } = uri;
     const itemString = getInterfaceItems();
     if (!itemString) {
@@ -17,7 +34,8 @@ export default async function autoFillContent(uri: Uri) {
     let editor = vscode.window.activeTextEditor;
     let document = editor.document;
     const interfaceName = document.getText(editor.selection);
-    let dirName = path.join(path.dirname(fsPath), camelCase(interfaceName) + 'Component');
+    const componentName = capitalize(interfaceName) + capitalize(commandKey) + 'Component';
+    let dirName = path.join(path.dirname(fsPath), componentName);
 
     if (fs.existsSync(dirName)) {
         let count = 1;
@@ -27,11 +45,48 @@ export default async function autoFillContent(uri: Uri) {
             count++;
         }
     }
+    const indexPath = dirName + '/index.tsx';
+    const typePath = deleteExt(path.relative(dirName, fsPath), '.ts');
     fs.mkdirSync(dirName);
     const tokenMap = getTokenMap(itemString);
-    await fillContent(dirName);
+    // 写config 文件
 
-    // await filContent(fsPath);
+    fillConfigContent(commandKey, tokenMap, dirName);
+    // 写渲染层
+    await fillContent(componentName, indexPath, commandKey, typePath, interfaceName);
+    // 写Mock数据
+    await fillMock(tokenMap, dirName);
+};
+const fillConfigContent = (commandKey: string, tokens: Map<string, string>, dirName: string) => {
+    const config = generateMap[commandKey];
+    const content = config(tokens);
+    const fileName = dirName + '/utils.tsx';
+    if (fs.existsSync(fileName)) {
+        fs.appendFileSync(dirName + '/utils.tsx', content);
+        return;
+    }
+    fs.writeFileSync(dirName + '/utils.tsx', content);
+};
+
+const fillMock = async (tokens: Map<string, string>, dirName: string) => {
+
+    try {
+        const res = generateFakerData(tokens);
+        const fileName = dirName + '/mock.ts';
+        let content = 'export const getMockData = ()=>[';
+        content += res.map(item => {
+         return   JSON.stringify(item);
+        }).join(',\n');
+        content += '\n]';
+        if (fs.existsSync(fileName)) {
+            fs.appendFileSync(fileName, content);
+            return;
+        }
+        fs.writeFileSync(fileName, content);
+    } catch (err) {
+        console.log({ err });
+        vscode.window.showErrorMessage(err.message);
+    }
 };
 
 
@@ -105,7 +160,7 @@ const getInterfaceItems = (): string | void => {
         vscode.window.showErrorMessage('仅支持Interface数据');
     }
     catch (err) {
-        vscode.window.showErrorMessage(err);
+        vscode.window.showErrorMessage(err.message);
     }
 };
 
@@ -116,25 +171,27 @@ const getTokenMap = (itemString): Map<string, string> => {
         if (!item) {
             return;
         }
-        const itemString = item.trim()
-        const items = itemString.substring(0, itemString.length - 1).split(':');
+        const items = item.split(':');
         if (items.length === 1) {
-            tokenMap.set(item[0].trim(), 'any');
+            tokenMap.set(items[0].replace("?", '').trim(), 'any');
         }
         if (items.length === 2) {
-            tokenMap.set(item[0].trim(), item[0].trim());
+            tokenMap.set(items[0].replace("?", '').trim(), items[1].trim());
         }
     });
     return tokenMap;
 };
 
-const fillContent = async (dir: string) => {
+const fillContent = async (componentName: string, newFsPath: string, commandKey: string, typePath: string, interfaceName: string) => {
     try {
-        const templatePath = path.join(__dirname, `AddFor.ejs`);
-        const content = await renderFileAsync(templatePath, { dir });
+        const templatePath = path.join(__dirname, cmdMap[commandKey]);
+        const content = await renderFileAsync(templatePath, { name: componentName, typePath, interfaceName });
         console.log({ content });
+        await writeFileAsync(newFsPath, content);
+        commands.executeCommand('vscode.open', Uri.file(newFsPath));
     }
     catch (err) {
-        vscode.window.showErrorMessage(err)
+        console.log({ err });
+        vscode.window.showErrorMessage(err.message);
     }
 };

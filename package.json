@@ -12,7 +12,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./dist/extension.js",
+  "main": "./build/extension.js",
   "contributes": {
     "commands": [
       {
@@ -20,23 +20,61 @@
         "title": "生成Interface"
       },
       {
-        "command": "easyCode.interface-to-component",
-        "title": "根据接口生成组件"
+        "command": "easyCode.to-CRUD",
+        "title": "生成CRUD"
+      },
+      {
+        "command": "easyCode.to-search-form",
+        "title": "生成搜索表单"
+      },
+      {
+        "command": "easyCode.to-table",
+        "title": "生成Table"
+      },
+      {
+        "command": "easyCode.to-edit-form",
+        "title": "生成可编辑表单"
+      },
+      {
+        "command": "easyCode.to-description",
+        "title": "生成详组件"
       }
     ],
     "menus": {
       "explorer/context": [
         {
           "command": "easyCode.json-to-ts-interface",
-          "group": "react-generator",
+          "group": "easy-generator",
           "when": "resourceExtname == .json"
         }
       ],
-      "editor/context": [{
-        "command": "easyCode.interface-to-component",
-        "group": "react-generator",
-        "when": "resourceLangId == typescript && editorHasSelection"
-      }]
+      "editor/context": [
+        {
+          "command": "easyCode.to-CRUD",
+          "group": "easy-generator",
+          "when": "resourceLangId == typescript && editorHasSelection"
+        },
+        {
+          "command": "easyCode.to-search-form",
+          "group": "easy-generator",
+          "when": "resourceLangId == typescript && editorHasSelection"
+        },
+        {
+          "command": "easyCode.to-table",
+          "group": "easy-generator",
+          "when": "resourceLangId == typescript && editorHasSelection"
+        },
+        {
+          "command": "easyCode.to-edit-form",
+          "group": "easy-generator",
+          "when": "resourceLangId == typescript && editorHasSelection"
+        },
+        {
+          "command": "easyCode.to-description",
+          "group": "easy-generator",
+          "when": "resourceLangId == typescript && editorHasSelection"
+        }
+      ]
     }
   },
   "scripts": {
@@ -72,6 +110,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "ejs": "^3.1.8",
     "es7-shim": "^6.0.0",
+    "faker": "^6.6.6",
     "hash.js": "^1.0.3",
     "json-to-ts": "^1.7.0",
     "lodash.camelcase": "^4.3.0",

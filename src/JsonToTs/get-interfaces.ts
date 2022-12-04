@@ -104,10 +104,11 @@ export function getInterfaceStringFromDescription({ name, typeMap, IName }: Inte
 
 export function getClassStringFromDescriptionByInterface({ name, typeMap, IName, ModelName }: InterfaceDescription): string {
   const stringTypeMap = Object.entries(typeMap)
-    .map(([key, name]) => ` @JsonProperty()\n ${key}: ${name};\n`)
+    //.map(([key, name]) => ` @JsonProperty()\n ${key}: ${name};\n`)
+    .map(([key, name]) => `${key}: ${name};\n`)
     .reduce((a, b) => (a += b), "");
 
-  let interfaceString = `export class ${ModelName} extends ${IName}  {\n`;
+  let interfaceString = `export class ${ModelName} implements ${IName}  {\n`;
   interfaceString += stringTypeMap;
   interfaceString += "}";
 

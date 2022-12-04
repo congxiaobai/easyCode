@@ -1,0 +1,14 @@
+import React, { useState } from 'react';
+import { <%= interfaceName %> } from '<%= typePath %>';
+import { getTableColumns } from './utils';
+import { getMockData } from './mock';
+
+export default <%= name %> = (props:any) =>{
+    const [dataSource,setDataSource]  = useState<<%=interfaceName %>[]>();
+    const columns = getTableColumns();
+    useEffect(()=>{
+        setDataSource(getMockData());
+    },[])
+    return <Table columns={columns} dta={dataSource}>
+    </Table>
+}
