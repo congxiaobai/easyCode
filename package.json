@@ -1,8 +1,10 @@
 {
-  "name": "easycode",
+  "name": "humming",
   "displayName": "",
   "description": "",
   "version": "0.0.1",
+  "publisher": "wangshuang40",
+  "keywords": ["humming", "react", "demo"],
   "engines": {
     "vscode": "^1.63.0"
   },
@@ -13,31 +15,32 @@
     "onStartupFinished"
   ],
   "main": "./build/extension.js",
+  "icon": "bird.png",
   "contributes": {
     "commands": [
       {
         "command": "easyCode.json-to-ts-interface",
-        "title": "生成Interface"
+        "title": "Humming:生成数据结构"
       },
       {
         "command": "easyCode.to-CRUD",
-        "title": "生成CRUD"
+        "title": "Humming:生成CRUD"
       },
       {
         "command": "easyCode.to-search-form",
-        "title": "生成搜索表单"
+        "title": "Humming:生成搜索表单"
       },
       {
         "command": "easyCode.to-table",
-        "title": "生成Table"
+        "title": "Humming:生成Table"
       },
       {
         "command": "easyCode.to-edit-form",
-        "title": "生成可编辑表单(doing)"
+        "title": "Humming:生成可编辑表单(doing)"
       },
       {
         "command": "easyCode.to-description",
-        "title": "生成详情组件"
+        "title": "Humming:生成详情组件"
       }
     ],
     "menus": {
@@ -93,7 +96,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "16.x",
     "@types/pluralize": "^0.0.27",
-    "@types/vscode": "^1.73.0",
+    "@types/vscode": "^1.63.0",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
     "@vscode/test-electron": "^2.2.0",
