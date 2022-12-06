@@ -1,0 +1,59 @@
+
+import React, { useEffect, useState } from 'react';
+//SearchFormForCrud组件的更多用法请查阅https://yyfe.sankuai.com/atom#/home/component/129
+import SearchFormForCrud from '@yyfe/SearchFormForCrud'
+
+//Table组件的更多用法请查阅https://yyfe.sankuai.com/atom#/home/component/118 
+import Table from '@yyfe/Table'
+
+import { getTableColumns, getSearchItems } from './utils';
+import { getMockData } from './mock';
+import { <%= interfaceName %> } from '<%= typePath %>';
+
+interface IParams extends <%= interfaceName %> {
+    pageSize:number,
+    pageNum:number,
+}
+
+export default (props: any) => {
+    const { pageSizeOptions = [20, 30, 50] } = props;
+    const [dataSource, setDataSource] = useState <<%= interfaceName %> [] > (new Array<<%= interfaceName %>>());
+    const [dataSourceCount, setDataSourceCount] = useState <number> (0);
+    const [searchParams, setSearchParams] = useState <<%= interfaceName %>> ();
+    const [pageSize, setPageSize] = useState<number>(pageSizeOptions[0] || 20);
+    const [pageNum, setPageNum] = useState<number>(1);
+    const columns = getTableColumns();
+    const searchItems = getSearchItems();
+    const requestData = (params?: IParams) => {
+         setDataSource(getMockData());
+         setDataSourceCount(1000);
+    }
+    useEffect(() => {
+        requestData({searchParams,pageSize,pageSize});
+    }, [searchParams,pageNum,pageSize])
+    const onSubmit = (formValue: <%= interfaceName %>) => {
+        setSearchParams({...formValue})
+    };
+    const onReset = (formValue: <%= interfaceName %>) => {
+        setPageNum(0);
+        setSearchParams({...formValue})
+    }
+    const onSizeChange = (current: number, size?: number) => {
+        setPageNum(current);
+        size&&setPageSize(size);
+    }
+    return (
+        <>
+            <SearchFormForCrud onReset={onReset} onSubmit={onSubmit}>
+            </SearchFormForCrud>
+            <Table data={dataSource} columns={columns} pagination={{
+                total: dataSourceCount,
+                pageSize: pageSize,
+                onChange: onSizeChange,
+                currentPage: pageNum,
+                showJumper: true,
+                pageSizeOptions: pageSizeOptions,
+                showTotal: (total: number) => `共 ${total} 条数据`
+            }}></Table></>
+    )
+}

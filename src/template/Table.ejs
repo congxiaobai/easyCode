@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { <%= interfaceName %> } from '<%= typePath %>';
 import { getTableColumns } from './utils';
 import { getMockData } from './mock';
+import Table from '@yyfe/Table'
 
-export default <%= name %> = (props:any) =>{
+export default (props:any) =>{
     const [dataSource,setDataSource]  = useState<<%=interfaceName %>[]>();
     const columns = getTableColumns();
     useEffect(()=>{

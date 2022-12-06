@@ -4,7 +4,7 @@
   "description": "",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.73.0"
+    "vscode": "^1.63.0"
   },
   "categories": [
     "Other"
@@ -33,11 +33,11 @@
       },
       {
         "command": "easyCode.to-edit-form",
-        "title": "生成可编辑表单"
+        "title": "生成可编辑表单(doing)"
       },
       {
         "command": "easyCode.to-description",
-        "title": "生成详组件"
+        "title": "生成详情组件"
       }
     ],
     "menus": {
@@ -106,13 +106,12 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "@appworks/project-service": "^0.1.3",
+    "@faker-js/faker": "^7.6.0",
     "copy-webpack-plugin": "^11.0.0",
     "ejs": "^3.1.8",
     "es7-shim": "^6.0.0",
     "faker": "^6.6.6",
     "hash.js": "^1.0.3",
-    "json-to-ts": "^1.7.0",
     "lodash.camelcase": "^4.3.0",
     "lodash.upperfirst": "^4.3.1",
     "pluralize": "^3.1.0"

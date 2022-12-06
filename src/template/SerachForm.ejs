@@ -1,0 +1,27 @@
+
+import React, { useEffect, useState } from 'react';
+//SearchFormForCrud组件的更多用法请查阅https://yyfe.sankuai.com/atom#/home/component/129
+import SearchFormForCrud from '@yyfe/SearchFormForCrud'
+
+import { getSearchItems } from './utils';
+import { getMockData } from './mock';
+import { <%= interfaceName %> } from '<%= typePath %>';
+
+export default (props: any) => {
+ 
+    const [searchParams, setSearchParams] = useState <<%= interfaceName %>> ();
+   
+    const searchItems = getSearchItems();
+    const onSubmit = (formValue: <%= interfaceName %>) => {
+        setSearchParams({...formValue})
+    };
+    const onReset = (formValue: <%= interfaceName %>) => {
+
+        setSearchParams({...formValue})
+    }
+
+    return (
+            <SearchFormForCrud onReset={onReset} onSubmit={onSubmit}>
+            </SearchFormForCrud>     
+    )
+}

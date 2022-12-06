@@ -1,0 +1,36 @@
+import React, { useState ,useEffect} from 'react';
+
+//DetailInfoLayout组件使用文档https://yyfe.sankuai.com/atom#/home/component/103
+import DetailInfoLayout from "@yyfe/DetailInfoLayout";
+import { <%= interfaceName %> } from '<%= typePath %>';
+
+//Description 组件使用文档https://yyfe.sankuai.com/atom#/home/component/96
+import Description from "@yyfe/Description";
+import { getFileds } from './utils';
+import { getMockData } from './mock';
+const { DetailItem, DetailPage } = DetailInfoLayout;
+
+export default () => {
+    const [dataSource, setDataSource] = useState<IChildrenMenuList>({} as <%= interfaceName %>);
+    useEffect(()=>{
+        setDataSource(getMockData());
+    },[])
+    const column =getFileds()
+    return (
+        <>
+            <div >
+                <DetailPage toolBar={<button>tools</button>} pageTitle={"标题"}
+                    footer={<button style={{ height: 30 }}>取消</button>}
+                    style={{ height: "calc(100vh - 30px)" }} headerPrex={`ID:99999`}>
+                    <DetailItem tabTitle={"详情"} tabKey={"descript"}>
+                        <div >
+                            <Description column={column} data={dataSource} />
+                        </div>
+                    </DetailItem>
+                    <DetailItem tabTitle={"日志"} tabKey={"detail"}> <div style={{ height: 300 }}></div></DetailItem>
+                    <DetailItem tabTitle={"审批"} tabKey={"process"}><div style={{ height: 300 }}></div></DetailItem>
+                </DetailPage>
+            </div>
+        </>
+    )
+}
